@@ -9,5 +9,4 @@ public class UnoserverApplication {
     public static void main(String[] args) {
         SpringApplication.run(UnoserverApplication.class, args);
     }
-
 }
