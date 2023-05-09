@@ -3,15 +3,26 @@ package com.hgdroplet.unoserver.controller;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.hgdroplet.unoserver.domain.User;
 import com.hgdroplet.unoserver.repository.UserRepository;
+import com.hgdroplet.unoserver.service.UserService;
 
-@RestController
+@Controller
+// @RestController
 @RequiredArgsConstructor
 public class UserController {
     private final UserRepository userRepository;
+    private final UserService userService;
+
+//    @Autowired
+//    public UserController(UserService userService) {
+//        this.userService = userService;
+//    }
 
     @PostMapping("user")
     @ResponseBody
@@ -41,5 +52,27 @@ public class UserController {
     @ResponseBody
     public List<User> getUsers() {
         return userRepository.findAll();
+    }
+
+//////
+
+    @GetMapping(value = "/users")
+    public String list(Model model) {
+        List<User> users = userService.findUsers();
+        model.addAttribute("users", users);
+        return "users/userList";
+    }
+
+    @GetMapping(value = "/users/new")
+    public String createForm() {
+        return "users/createUserForm";
+    }
+
+    @PostMapping(value = "/users/new")
+    public String create(UserForm form) {
+        User user = new User();
+        user.setNickname(form.getName());
+        userService.join(user);
+        return "redirect:/";
     }
 }
